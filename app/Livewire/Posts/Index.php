@@ -16,6 +16,8 @@ class Index extends Component
 {
     use WithPagination;
 
+    public int $perPage = 10;
+
     public ?int $postId = null;
 
     public string $title = '';
@@ -65,15 +67,18 @@ class Index extends Component
 
         session()->flash('status', 'Post deleted successfully.');
 
-        $this->resetPage();
+        if ($this->hasEmptyPage()) {
+            $this->previousPage();
+        }
     }
 
     public function render(): View
     {
         return view('livewire.posts.index', [
             'posts' => Post::query()
-                ->latest()
-                ->paginate(5),
+                ->select(['id', 'title', 'content', 'created_at', 'updated_at'])
+                ->latest('updated_at')
+                ->paginate($this->perPage),
         ]);
     }
 
@@ -86,6 +91,15 @@ class Index extends Component
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
         ];
+    }
+
+    protected function hasEmptyPage(): bool
+    {
+        if ($this->getPage() === 1) {
+            return false;
+        }
+
+        return ($this->getPage() - 1) * $this->perPage >= Post::query()->count();
     }
 
     protected function resetForm(): void
