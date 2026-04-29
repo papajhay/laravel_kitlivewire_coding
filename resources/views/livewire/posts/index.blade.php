@@ -1,8 +1,12 @@
 <section class="w-full">
     <div class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="flex flex-col gap-2">
-            <flux:heading size="xl" level="1">Posts</flux:heading>
-            <flux:subheading size="lg">Create, edit, review, and delete posts from a single Livewire screen.</flux:subheading>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="flex flex-col gap-2">
+                <flux:heading size="xl" level="1">Posts</flux:heading>
+                <flux:subheading size="lg">Manage your posts with a dedicated creation modal and inline editing workflow.</flux:subheading>
+            </div>
+
+            <livewire:posts.create-post />
         </div>
 
         @if (session('status'))
@@ -12,42 +16,51 @@
         @endif
 
         <div class="grid gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
-            <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-                <div class="mb-6">
-                    <flux:heading size="lg">{{ $postId ? 'Edit Post' : 'Create Post' }}</flux:heading>
-                    <flux:subheading>{{ $postId ? 'Update the selected post.' : 'Add a new post to the database.' }}</flux:subheading>
+            <div class="space-y-6">
+                <div class="rounded-2xl border border-dashed border-zinc-300 bg-white/80 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                    <flux:heading size="lg">Create Posts</flux:heading>
+                    <flux:subheading class="mt-2">
+                        Use the create button to open a focused modal with validation, plain-text protection, and a clearer submission flow.
+                    </flux:subheading>
                 </div>
 
-                <form wire:submit="save" class="space-y-5">
-                    <flux:input
-                        wire:model.live="title"
-                        name="title"
-                        label="Title"
-                        type="text"
-                        placeholder="Post title"
-                        autofocus
-                    />
+                @if ($postId)
+                    <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                        <div class="mb-6">
+                            <flux:heading size="lg">Edit Post</flux:heading>
+                            <flux:subheading>Update the selected post and save your changes.</flux:subheading>
+                        </div>
 
-                    <flux:textarea
-                        wire:model.live="content"
-                        name="content"
-                        label="Content"
-                        rows="10"
-                        placeholder="Write the post content here..."
-                    />
+                        <form wire:submit="save" class="space-y-5">
+                            <flux:input
+                                wire:model.blur="title"
+                                name="title"
+                                label="Title"
+                                type="text"
+                                placeholder="Post title"
+                                autofocus
+                            />
 
-                    <div class="flex flex-wrap items-center gap-3">
-                        <flux:button variant="primary" type="submit">
-                            {{ $postId ? 'Update Post' : 'Create Post' }}
-                        </flux:button>
+                            <flux:textarea
+                                wire:model.blur="content"
+                                name="content"
+                                label="Content"
+                                rows="10"
+                                placeholder="Write the post content here..."
+                            />
 
-                        @if ($postId)
-                            <flux:button variant="filled" type="button" wire:click="cancelEditing">
-                                Cancel
-                            </flux:button>
-                        @endif
+                            <div class="flex flex-wrap items-center gap-3">
+                                <flux:button variant="primary" type="submit">
+                                    Update Post
+                                </flux:button>
+
+                                <flux:button variant="filled" type="button" wire:click="cancelEditing">
+                                    Cancel
+                                </flux:button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                @endif
             </div>
 
             <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">

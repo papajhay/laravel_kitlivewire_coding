@@ -5,6 +5,7 @@ namespace App\Livewire\Posts;
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -21,21 +22,10 @@ class Index extends Component
 
     public string $content = '';
 
-    public function save(): void
+    #[On('post-created')]
+    public function refreshPosts(string $message = 'Post created successfully.'): void
     {
-        $validated = $this->validate($this->rules());
-
-        if ($this->postId === null) {
-            Post::query()->create($validated);
-
-            session()->flash('status', 'Post created successfully.');
-        } else {
-            Post::query()->findOrFail($this->postId)->update($validated);
-
-            session()->flash('status', 'Post updated successfully.');
-        }
-
-        $this->resetForm();
+        session()->flash('status', $message);
         $this->resetPage();
     }
 
@@ -51,6 +41,18 @@ class Index extends Component
     public function cancelEditing(): void
     {
         $this->resetForm();
+    }
+
+    public function save(): void
+    {
+        $validated = $this->validate($this->rules());
+
+        Post::query()->findOrFail($this->postId)->update($validated);
+
+        session()->flash('status', 'Post updated successfully.');
+
+        $this->resetForm();
+        $this->resetPage();
     }
 
     public function deletePost(Post $post): void

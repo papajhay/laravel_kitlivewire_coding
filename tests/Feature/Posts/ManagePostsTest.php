@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Posts\CreatePost;
 use App\Livewire\Posts\Index;
 use App\Models\Post;
 use App\Models\User;
@@ -20,7 +21,7 @@ test('authenticated users can visit the posts page', function () {
 test('a user can create a post', function () {
     $this->actingAs(User::factory()->create());
 
-    Livewire::test(Index::class)
+    Livewire::test(CreatePost::class)
         ->set('title', 'My first post')
         ->set('content', 'This is the content of the first post.')
         ->call('save')
@@ -30,6 +31,18 @@ test('a user can create a post', function () {
         'title' => 'My first post',
         'content' => 'This is the content of the first post.',
     ]);
+});
+
+test('a user sees custom validation messages when invalid data is submitted', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(CreatePost::class)
+        ->set('title', '  ')
+        ->set('content', 'short')
+        ->call('save')
+        ->assertHasErrors(['title', 'content'])
+        ->assertSee('A title is required before the post can be created.')
+        ->assertSee('The content must contain at least 10 characters.');
 });
 
 test('a user can update a post', function () {
