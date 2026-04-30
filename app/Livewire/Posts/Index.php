@@ -3,6 +3,7 @@
 namespace App\Livewire\Posts;
 
 use App\Models\Post;
+use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -16,19 +17,13 @@ class Index extends Component
 {
     use WithPagination;
 
-    public int $perPage = 10;
+    public int $perPage = 5;
+
+    public ?int $postIdToDelete = null;
 
     #[On('post-created')]
-    public function refreshPosts(string $message = 'Post created successfully.'): void
+    public function refreshPosts(): void
     {
-        session()->flash('status', $message);
-        $this->resetPage();
-    }
-
-    #[On('post-updated')]
-    public function handlePostUpdated(string $message = 'Post updated successfully.'): void
-    {
-        session()->flash('status', $message);
         $this->resetPage();
     }
 
@@ -37,11 +32,33 @@ class Index extends Component
         $this->dispatch('edit-post', postId: $post->id);
     }
 
-    public function deletePost(Post $post): void
+    public function confirmDeletePost(int $postId): void
     {
-        $post->delete();
+        $this->postIdToDelete = $postId;
 
-        session()->flash('status', 'Post deleted successfully.');
+        $this->modal('delete-post-modal')->show();
+    }
+
+    public function deletePost(): void
+    {
+        $post = Post::query()->find($this->postIdToDelete);
+
+        if (! $post) {
+            $this->postIdToDelete = null;
+            $this->modal('delete-post-modal')->close();
+
+            return;
+        }
+
+        $post->delete();
+        $this->postIdToDelete = null;
+        $this->modal('delete-post-modal')->close();
+
+        Flux::toast(
+            text: 'Post deleted successfully.',
+            duration: 2000,
+            variant: 'success',
+        );
 
         if ($this->hasEmptyPage()) {
             $this->previousPage();

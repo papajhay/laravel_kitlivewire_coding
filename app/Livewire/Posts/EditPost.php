@@ -3,6 +3,7 @@
 namespace App\Livewire\Posts;
 
 use App\Models\Post;
+use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
@@ -54,7 +55,12 @@ class EditPost extends Component
 
         $this->resetForm();
         $this->modal('edit-post-modal')->close();
-        $this->dispatch('post-updated', message: 'Post updated successfully.');
+        Flux::toast(
+            text: 'Post updated successfully.',
+            duration: 2000,
+            variant: 'success',
+        );
+        $this->dispatch('$refresh')->to(Index::class);
     }
 
     public function render(): View

@@ -13,13 +13,6 @@
 
         <livewire:posts.edit-post />
 
-        @if (session('status'))
-            <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
-                {{ session('status') }}
-            </div>
-        @endif
-
-
             <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                 @if ($posts->isEmpty())
                     <div class="px-6 py-16 text-center">
@@ -70,8 +63,7 @@
                                                 variant="danger"
                                                 size="sm"
                                                 type="button"
-                                                wire:click="deletePost({{ $post->id }})"
-                                                wire:confirm="Delete this post?"
+                                                wire:click="confirmDeletePost({{ $post->id }})"
                                             >
                                                 Delete
                                             </flux:button>
@@ -89,5 +81,35 @@
                     </flux:table>
                 @endif
             </div>
+
+        <flux:modal name="delete-post-modal" class="max-w-md">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <flux:heading size="lg">Delete post</flux:heading>
+                    <flux:subheading>
+                        Are you sure you want to delete this post?
+                    </flux:subheading>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+                    <flux:modal.close>
+                        <flux:button variant="filled" type="button">
+                            Cancel
+                        </flux:button>
+                    </flux:modal.close>
+
+                    <flux:button
+                        variant="danger"
+                        type="button"
+                        wire:click="deletePost"
+                        wire:loading.attr="disabled"
+                        wire:target="deletePost"
+                    >
+                        <span wire:loading.remove wire:target="deletePost">Delete</span>
+                        <span wire:loading wire:target="deletePost">Deleting...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
     </div>
 </section>
