@@ -3,6 +3,7 @@
 namespace App\Livewire\Posts;
 
 use App\Models\Post;
+use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -40,7 +41,12 @@ class CreatePost extends Component
 
         $this->resetForm();
         $this->modal('create-post-modal')->close();
-        $this->dispatch('post-created', message: 'Post created successfully.');
+        Flux::toast(
+            text: 'Post created successfully.',
+            duration: 2000,
+            variant: 'success',
+        );
+        $this->dispatch('post-created');
     }
 
     public function render(): View
