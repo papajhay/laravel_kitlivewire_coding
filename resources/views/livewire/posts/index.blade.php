@@ -4,12 +4,14 @@
             <div class="space-y-2">
                 <flux:heading size="xl" level="1">Posts</flux:heading>
                 <flux:subheading size="lg">
-                    Manage your posts in a clean table with simple pagination and inline actions.
+                    Manage your posts in a clean table with simple pagination and modal-based editing.
                 </flux:subheading>
             </div>
 
             <livewire:posts.create-post />
         </div>
+
+        <livewire:posts.edit-post />
 
         @if (session('status'))
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
@@ -17,47 +19,6 @@
             </div>
         @endif
 
-        <div class="grid gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
-            <div class="space-y-6">
-
-                @if ($postId)
-                    <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-                        <div class="mb-6">
-                            <flux:heading size="lg">Edit Post</flux:heading>
-                            <flux:subheading>Update the selected post and save your changes.</flux:subheading>
-                        </div>
-
-                        <form wire:submit="save" class="space-y-5">
-                            <flux:input
-                                wire:model.blur="title"
-                                name="title"
-                                label="Title"
-                                type="text"
-                                placeholder="Post title"
-                                autofocus
-                            />
-
-                            <flux:textarea
-                                wire:model.blur="content"
-                                name="content"
-                                label="Content"
-                                rows="10"
-                                placeholder="Write the post content here..."
-                            />
-
-                            <div class="flex flex-wrap items-center gap-3">
-                                <flux:button variant="primary" type="submit">
-                                    Update Post
-                                </flux:button>
-
-                                <flux:button variant="filled" type="button" wire:click="cancelEditing">
-                                    Cancel
-                                </flux:button>
-                            </div>
-                        </form>
-                    </div>
-                @endif
-            </div>
 
             <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                 @if ($posts->isEmpty())
@@ -128,6 +89,5 @@
                     </flux:table>
                 @endif
             </div>
-        </div>
     </div>
 </section>
