@@ -18,12 +18,6 @@ class Index extends Component
 
     public int $perPage = 10;
 
-    public ?int $postId = null;
-
-    public string $title = '';
-
-    public string $content = '';
-
     #[On('post-created')]
     public function refreshPosts(string $message = 'Post created successfully.'): void
     {
@@ -31,39 +25,21 @@ class Index extends Component
         $this->resetPage();
     }
 
+    #[On('post-updated')]
+    public function handlePostUpdated(string $message = 'Post updated successfully.'): void
+    {
+        session()->flash('status', $message);
+        $this->resetPage();
+    }
+
     public function editPost(Post $post): void
     {
-        $this->resetValidation();
-
-        $this->postId = $post->id;
-        $this->title = $post->title;
-        $this->content = $post->content;
-    }
-
-    public function cancelEditing(): void
-    {
-        $this->resetForm();
-    }
-
-    public function save(): void
-    {
-        $validated = $this->validate($this->rules());
-
-        Post::query()->findOrFail($this->postId)->update($validated);
-
-        session()->flash('status', 'Post updated successfully.');
-
-        $this->resetForm();
-        $this->resetPage();
+        $this->dispatch('edit-post', postId: $post->id);
     }
 
     public function deletePost(Post $post): void
     {
         $post->delete();
-
-        if ($this->postId === $post->id) {
-            $this->resetForm();
-        }
 
         session()->flash('status', 'Post deleted successfully.');
 
@@ -82,17 +58,6 @@ class Index extends Component
         ]);
     }
 
-    /**
-     * @return array<string, array<int, string>>
-     */
-    protected function rules(): array
-    {
-        return [
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
-        ];
-    }
-
     protected function hasEmptyPage(): bool
     {
         if ($this->getPage() === 1) {
@@ -100,11 +65,5 @@ class Index extends Component
         }
 
         return ($this->getPage() - 1) * $this->perPage >= Post::query()->count();
-    }
-
-    protected function resetForm(): void
-    {
-        $this->reset(['postId', 'title', 'content']);
-        $this->resetValidation();
     }
 }

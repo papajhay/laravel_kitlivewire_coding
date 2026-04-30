@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Posts\CreatePost;
+use App\Livewire\Posts\EditPost;
 use App\Livewire\Posts\Index;
 use App\Models\Post;
 use App\Models\User;
@@ -50,11 +51,11 @@ test('a user can update a post', function () {
 
     $post = Post::factory()->create();
 
-    Livewire::test(Index::class)
-        ->call('editPost', $post)
+    Livewire::test(EditPost::class)
+        ->call('open', $post->id)
         ->set('title', 'Updated title')
         ->set('content', 'Updated content')
-        ->call('save')
+        ->call('update')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('posts', [
