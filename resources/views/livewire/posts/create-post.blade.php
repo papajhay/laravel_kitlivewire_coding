@@ -1,6 +1,6 @@
 <div class="shrink-0">
     <flux:modal.trigger name="create-post-modal">
-        <flux:button variant="primary">
+        <flux:button variant="primary" icon="folder-plus" >
             Create Post
         </flux:button>
     </flux:modal.trigger>

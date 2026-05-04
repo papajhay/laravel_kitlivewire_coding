@@ -11,9 +11,10 @@
             <livewire:posts.create-post />
         </div>
 
+        <livewire:posts.view-post />
         <livewire:posts.edit-post />
 
-            <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+            <div >
                 @if ($posts->isEmpty())
                     <div class="px-6 py-16 text-center">
                         <div class="mx-auto max-w-md rounded-2xl border border-dashed border-zinc-300 px-6 py-10 dark:border-zinc-700">
@@ -24,7 +25,7 @@
                         </div>
                     </div>
                 @else
-                    <flux:table container:class="w-full">
+                    <flux:table>
                         <flux:table.columns class="bg-zinc-50/80 dark:bg-zinc-800/60">
                             <flux:table.column>Title</flux:table.column>
                             <flux:table.column>Content</flux:table.column>
@@ -52,21 +53,33 @@
                                         <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-end">
                                             <flux:button
                                                 variant="filled"
+                                                icon="eye"
                                                 size="sm"
                                                 type="button"
+                                                aria-label="View post"
+                                                title="View post"
+                                                wire:click="viewPost({{ $post->id }})"
+                                            />
+
+                                            <flux:button
+                                                variant="filled"
+                                                icon="pencil-square"
+                                                size="sm"
+                                                type="button"
+                                                aria-label="Edit post"
+                                                title="Edit post"
                                                 wire:click="editPost({{ $post->id }})"
-                                            >
-                                                Edit
-                                            </flux:button>
+                                            />
 
                                             <flux:button
                                                 variant="danger"
+                                                icon="trash"
                                                 size="sm"
                                                 type="button"
+                                                aria-label="Delete post"
+                                                title="Delete post"
                                                 wire:click="confirmDeletePost({{ $post->id }})"
-                                            >
-                                                Delete
-                                            </flux:button>
+                                            />
                                         </div>
                                     </flux:table.cell>
                                 </flux:table.row>
