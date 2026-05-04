@@ -27,6 +27,11 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function viewPost(Post $post): void
+    {
+        $this->dispatch('view-post', postId: $post->id);
+    }
+
     public function editPost(Post $post): void
     {
         $this->dispatch('edit-post', postId: $post->id);
